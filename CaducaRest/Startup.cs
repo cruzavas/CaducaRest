@@ -1,16 +1,13 @@
+using CaducaRest.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using System.IO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CaducaRest
 {
@@ -30,8 +27,25 @@ namespace CaducaRest
 			services.AddControllers();
 			services.AddSwaggerGen(c =>
 			{
-				c.SwaggerDoc("v1", new OpenApiInfo { Title = "CaducaRest", Version = "v1" });
-			});
+				c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api Caduca REST", Version = "v1" });
+                //Obtenemos el directorio actual
+                var basePath = AppContext.BaseDirectory;
+                //Obtenemos el nombre de la dll por medio de reflexión
+                var assemblyName = System.Reflection.Assembly
+                              .GetEntryAssembly().GetName().Name;
+                //Al nombre del assembly le agregamos la extensión xml
+                var fileName = System.IO.Path
+                              .GetFileName(assemblyName + ".xml");
+                //Agregamos el Path, es importante utilizar el comando
+                // Path.Combine ya que entre windows y linux 
+                // rutas de los archivos
+                // En windows es por ejemplo c:/Umostarsuarios con / 
+                // y en linux es \usr con \
+                var xmlPath = Path.Combine(basePath, fileName);
+                c.IncludeXmlComments(xmlPath);
+            });
+			services.AddDbContext<CaducaContext>(options =>
+				  options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,7 +55,9 @@ namespace CaducaRest
 			{
 				app.UseDeveloperExceptionPage();
 				app.UseSwagger();
-				app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CaducaRest v1"));
+				app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "CaducaRest v1");
+                    c.DefaultModelsExpandDepth(-1);
+                });
 			}
 
 			app.UseHttpsRedirection();
