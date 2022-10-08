@@ -3,6 +3,7 @@ using CaducaRest.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CaducaRest.Migrations
 {
     [DbContext(typeof(CaducaContext))]
-    partial class CaducaContextModelSnapshot : ModelSnapshot
+    [Migration("20220929032804_TablaProductos")]
+    partial class TablaProductos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,19 +67,7 @@ namespace CaducaRest.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoriaId")
-                        .HasDatabaseName("IX_ProductoCategoria");
-
                     b.ToTable("Producto");
-                });
-
-            modelBuilder.Entity("CaducaRest.Models.Producto", b =>
-                {
-                    b.HasOne("CaducaRest.Models.Categoria", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriaId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

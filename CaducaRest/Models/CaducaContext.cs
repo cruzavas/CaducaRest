@@ -1,9 +1,5 @@
 ﻿using CaducaRest.Models.EntityConfigurations;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CaducaRest.Models
 {
@@ -16,8 +12,10 @@ namespace CaducaRest.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new CategoriaConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
         }
 
         public virtual DbSet<Categoria> Categoria { get; set; }
-	}
+        public virtual DbSet<Producto> Producto { get; set; }
+    }
 }

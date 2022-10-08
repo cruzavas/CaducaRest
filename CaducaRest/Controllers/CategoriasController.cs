@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CaducaRest.Models;
 using CaducaRest.DAO;
+using CaducaRest.Resources;
 
 namespace CaducaRest.Controllers
 {
@@ -22,12 +23,12 @@ namespace CaducaRest.Controllers
         //Agrega el ojeto categoriaDAO
         private CategoriaDAO categoriaDAO;
 
-        public CategoriasController(CaducaContext context)
+        public CategoriasController(CaducaContext context, LocService localizer)
         {
             _context = context;
             //Inicializa categoriaDAO con el contexto recibido
             // como parámetro
-            categoriaDAO = new CategoriaDAO(context);
+            categoriaDAO = new CategoriaDAO(context, localizer);
         }
 
         [HttpGet]
@@ -43,11 +44,11 @@ namespace CaducaRest.Controllers
         /// </summary>
         /// <returns>Todas las categorías</returns>
         // GET: api/Categorias
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoria()
-        {
-            return await _context.Categoria.ToListAsync();
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoria()
+        //{
+        //    return await _context.Categoria.ToListAsync();
+        //}
 
         /// <summary>
         /// Obtiene una categoría de acuerdo a su Id
