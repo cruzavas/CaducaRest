@@ -1,13 +1,10 @@
-﻿using System;
+﻿using CaducaRest.DAO;
+using CaducaRest.Models;
+using CaducaRest.Resources;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CaducaRest.Models;
-using CaducaRest.DAO;
-using CaducaRest.Resources;
 
 namespace CaducaRest.Controllers
 {
@@ -17,38 +14,26 @@ namespace CaducaRest.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriasController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
         private readonly CaducaContext _context;
-        //Agrega el ojeto categoriaDAO
-        private CategoriaDAO categoriaDAO;
+        //Add the object categoryDAO
+        private CategoryDAO categoryDAO;
 
-        public CategoriasController(CaducaContext context, LocService localizer)
+        public CategoriesController(CaducaContext context, LocService localizer)
         {
             _context = context;
-            //Inicializa categoriaDAO con el contexto recibido
-            // como parámetro
-            categoriaDAO = new CategoriaDAO(context, localizer);
+            //Initialize categoryDAO with the context received as a parameter  
+            categoryDAO = new CategoryDAO(context, localizer);
         }
 
         [HttpGet]
-        public async Task<List<Categoria>> GetCategoriaAsync()
+        public async Task<List<Category>> GetCategoryAsync()
         {
             //Cambia el método get para utilizar el 
             // objeto categoriaDAO
-            return await categoriaDAO.ObtenerTodoAsync();
+            return await categoryDAO.ObtenerTodoAsync();
         }
-
-        /// <summary>
-        /// Obtiene todas las categorías registradas
-        /// </summary>
-        /// <returns>Todas las categorías</returns>
-        // GET: api/Categorias
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoria()
-        //{
-        //    return await _context.Categoria.ToListAsync();
-        //}
 
         /// <summary>
         /// Obtiene una categoría de acuerdo a su Id
@@ -57,9 +42,9 @@ namespace CaducaRest.Controllers
         /// <param name="id">Id de la categoría</param>
         // GET: api/Categorias/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCategoria([FromRoute] int id)
+        public async Task<IActionResult> GetCategory([FromRoute] int id)
         {
-            var categoria = await categoriaDAO.ObtenerPorIdAsync(id);
+            var categoria = await categoryDAO.ObtenerPorIdAsync(id);
             if (categoria == null)
                 return NotFound();
 
@@ -75,7 +60,7 @@ namespace CaducaRest.Controllers
         // PUT: api/Categorias/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategoria([FromRoute] int id, [FromBody] Categoria categoria)
+        public async Task<IActionResult> PutCategory([FromRoute] int id, [FromBody] Category categoria)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -83,10 +68,9 @@ namespace CaducaRest.Controllers
             if (id != categoria.Id)
                 return BadRequest();
 
-            if (!await categoriaDAO.ModificarAsync(categoria))
+            if (!await categoryDAO.ModificarAsync(categoria))
             {
-                return StatusCode(categoriaDAO.customError.StatusCode,
-                                         categoriaDAO.customError.Message);
+                return StatusCode(categoryDAO.customError.StatusCode, categoryDAO.customError.Message);
             }
 
             return NoContent();
@@ -100,19 +84,17 @@ namespace CaducaRest.Controllers
         // POST: api/Categorias
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<IActionResult> PostCategoria([FromBody] Categoria categoria)
+        public async Task<IActionResult> PostCategory([FromBody] Category categoria)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             //Cambiamos el código para agregar aquí la clase.
             //Si no fue correcto regresamos el mensaje de error devuelto 
-            if (!await categoriaDAO.AgregarAsync(categoria))
+            if (!await categoryDAO.AgregarAsync(categoria))
             {
-                return StatusCode(categoriaDAO.customError.StatusCode,
-                                  categoriaDAO.customError.Message);
+                return StatusCode(categoryDAO.customError.StatusCode, categoryDAO.customError.Message);
             }
-            return CreatedAtAction("GetCategoria",
-                                      new { id = categoria.Id }, categoria);
+            return CreatedAtAction("GetCategoria", new { id = categoria.Id }, categoria);
         }
 
         /// <summary>
@@ -122,19 +104,18 @@ namespace CaducaRest.Controllers
         /// <param name="id">Id de la categoría a borrar</param>
         // DELETE: api/Categorias/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategoria([FromRoute] int id)
+        public async Task<IActionResult> DeleteCategory([FromRoute] int id)
         {
-            if (!await categoriaDAO.BorraAsync(id))
+            if (!await categoryDAO.BorraAsync(id))
             {
-                return StatusCode(categoriaDAO.customError.StatusCode,
-                                       categoriaDAO.customError.Message);
+                return StatusCode(categoryDAO.customError.StatusCode, categoryDAO.customError.Message);
             }
             return Ok();
         }
 
-        private bool CategoriaExists(int id)
+        private bool CategoryExists(int id)
         {
-            return _context.Categoria.Any(e => e.Id == id);
+            return _context.Category.Any(e => e.Id == id);
         }
     }
 }

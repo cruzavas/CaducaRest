@@ -7,12 +7,12 @@ using System.Linq;
 
 namespace CaducaRest.Rules.Categoria
 {
-	public class ReglaNombreUnico : IRule
+	public class RuleUniqueName : IRule
     {
-        private string nombre;
-        private readonly CaducaContext contexto;
-        private readonly LocService localizacion;
-        private int id;
+        private string _name;
+        private readonly CaducaContext _context;
+        private readonly LocService _localizer;
+        private int _id;
 
         /// <summary>
         /// Mensaje de error
@@ -26,13 +26,13 @@ namespace CaducaRest.Rules.Categoria
         /// <param name="context">Objeto para la bd</param>
         /// <param name="locService">Objeto para mensajes en varios
         /// idiomas</param>
-        public ReglaNombreUnico(int id, string nombre, CaducaContext context,
+        public RuleUniqueName(int id, string nombre, CaducaContext context,
                                 LocService locService)
         {
-            this.nombre = nombre;
-            this.contexto = context;
-            this.localizacion = locService;
-            this.id = id;
+            _name = nombre;
+            _context = context;
+            _localizer = locService;
+            _id = id;
         }
 
         /// <summary>
@@ -42,13 +42,13 @@ namespace CaducaRest.Rules.Categoria
         /// <returns>True si no se repite la categoría</returns>
         public bool IsValid()
         {
-            var registroRepetido = contexto.Categoria.AsNoTracking()
-                                     .FirstOrDefault(c => c.Nombre == nombre
-                                                     && c.Id != id);
+            var registroRepetido = _context.Categoria.AsNoTracking()
+                                     .FirstOrDefault(c => c.Nombre == _name
+                                                     && c.Id != _id);
             if (registroRepetido != null)
             {
                 customError = new CustomError(400,
-                   String.Format(this.localizacion
+                   String.Format(_localizer
                     .GetLocalizedHtmlString("Repeteaded"),
                                  "categoría", "nombre"), "Nombre");
                 return false;

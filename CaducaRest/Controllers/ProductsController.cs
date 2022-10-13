@@ -2,9 +2,7 @@
 using CaducaRest.Models;
 using CaducaRest.Resources;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CaducaRest.Controllers
@@ -16,75 +14,71 @@ namespace CaducaRest.Controllers
 	[ApiController]
 	public class ProductsController : ControllerBase
 	{
-		private readonly LocService _localizer;
-		private readonly CaducaContext _context;
-		private ProductDAO productoDAO;
+		private ProductDAO productDAO;
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="context"></param>
-		/// <param name="localize"></param>
-		public ProductsController(CaducaContext context,
-								   LocService localize)
+		/// <param name="localizer"></param>
+		public ProductsController(CaducaContext context, LocService localizer)
 		{
-			_context = context;
-			productoDAO = new ProductDAO(context, localize);
+			productDAO = new ProductDAO(context, localizer);
 		}
 
 		/// <summary>
-		/// Obtener todos los productos
+		/// Get all products
 		/// </summary>
 		/// <returns></returns>
-		// GET: api/Productos
+		// GET: api/Products
 		[HttpGet]
-		public IEnumerable<Producto> GetProducto()
+		public IEnumerable<Product> GetProducts()
 		{
-			return productoDAO.ObtenerTodo();
+			return productDAO.GetAll();
 		}
 
 		/// <summary>
-		/// Obtener un producto por su Id
+		/// Get product by id
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		// GET: api/Productos/5
+		// GET: api/Products/5
 		[HttpGet("{id}")]
-		public async Task<IActionResult> GetProducto([FromRoute] int id)
+		public async Task<IActionResult> GetProduct([FromRoute] int id)
 		{
-			var producto = await productoDAO.ObtenerPorIdAsync(id);
+			var product = await productDAO.GetByIdAsync(id);
 
-			if (producto == null)
+			if (product == null)
 			{
 				return NotFound();
 			}
 
-			return Ok(producto);
+			return Ok(product);
 		}
 
 		/// <summary>
-		/// Actualizar un producto
+		/// Update a product
 		/// </summary>
-		/// <param name="id">Id del producto</param>
-		/// <param name="producto">Datos del producto</param>
+		/// <param name="id">Product Id</param>
+		/// <param name="product">Product data</param>
 		/// <returns></returns>
-		// PUT: api/Productos/5
+		// PUT: api/Products/5
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutProducto([FromRoute] int id, [FromBody] Producto producto)
+		public async Task<IActionResult> PutProduct([FromRoute] int id, [FromBody] Product product)
 		{
 			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
 			}
 
-			if (id != producto.Id)
+			if (id != product.Id)
 			{
 				return BadRequest();
 			}
 
-			if (!await productoDAO.ModificarAsync(producto))
+			if (!await productDAO.ModifiedAsync(product))
 			{
-				return StatusCode(productoDAO.customError.StatusCode,
-								  productoDAO.customError.Message);
+				return StatusCode(productDAO.customError.StatusCode,
+								  productDAO.customError.Message);
 			}
 
 			return NoContent();
@@ -92,41 +86,41 @@ namespace CaducaRest.Controllers
 		}
 
 		/// <summary>
-		/// Agregar un producto
+		/// Add product
 		/// </summary>
-		/// <param name="producto">Datos del producto a agregar</param>
+		/// <param name="producto">Add product data</param>
 		/// <returns></returns>
-		// POST: api/Productos
+		// POST: api/Products
 		[HttpPost]
-		public async Task<IActionResult> PostProducto([FromBody] Producto producto)
+		public async Task<IActionResult> PostProduct([FromBody] Product product)
 		{
-			if (!await productoDAO.AgregarAsync(producto))
+			if (!await productDAO.AddAsync(product))
 			{
-				return StatusCode(productoDAO.customError.StatusCode,
-								  productoDAO.customError.Message);
+				return StatusCode(productDAO.customError.StatusCode,
+								  productDAO.customError.Message);
 			}
 
 			return CreatedAtAction("GetProducto",
-				   new { id = producto.Id }, producto);
+				   new { id = product.Id }, product);
 		}
 
 		/// <summary>
-		/// Borrar un producto
+		/// Delete product
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		// DELETE: api/Productos/5
+		// DELETE: api/Products/5
 		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteProducto([FromRoute] int id)
+		public async Task<IActionResult> DeleteProduct([FromRoute] int id)
 		{
 			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
 			}
-			if (!await productoDAO.BorraAsync(id))
+			if (!await productDAO.DeleteAsync(id))
 			{
-				return StatusCode(productoDAO.customError.StatusCode,
-								  productoDAO.customError.Message);
+				return StatusCode(productDAO.customError.StatusCode,
+								  productDAO.customError.Message);
 			}
 			return Ok();
 		}

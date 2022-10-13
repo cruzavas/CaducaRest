@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CaducaRest.Models.EntityConfigurations
 {
-    public class CategoriaConfiguration : IEntityTypeConfiguration<Categoria>
+    public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {
-        public void Configure(EntityTypeBuilder<Categoria> builder)
+        public void Configure(EntityTypeBuilder<Category> builder)
         {
             builder.HasIndex(e => e.Clave)
                 .HasDatabaseName("UI_CategoriaClave")

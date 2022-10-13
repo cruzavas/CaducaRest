@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CaducaRest.Core
 {
-	public interface IAccesoDAO<T> where T : class
+	public interface IAccessDAO<T> where T : class
 	{
         CustomError customError { get; set; }
         Task<List<T>> ObtenerTodoAsync();

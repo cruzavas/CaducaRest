@@ -3,18 +3,16 @@ using CaducaRest.Models;
 using CaducaRest.Resources;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CaducaRest.Rules.Categoria
 {
-	public class ReglaClaveUnico : IRule
+    public class RuleUniqueKey : IRule
     {
-        private int clave;
-        private int id;
-        private readonly CaducaContext contexto;
-        private readonly LocService localizacion;
+        private int _key;
+        private int _id;
+        private readonly CaducaContext _context;
+        private readonly LocService _localizer;
 
         /// <summary>
         /// Mensaje de error
@@ -28,13 +26,13 @@ namespace CaducaRest.Rules.Categoria
         /// <param name="clave">Clave de la categoría</param>
         /// <param name="context">Objeto para la bd</param>
         /// <param name="locService">Objeto para traducuir a varuis idiomas</param>
-        public ReglaClaveUnico(int id, int clave, CaducaContext context,
+        public RuleUniqueKey(int id, int clave, CaducaContext context,
                                LocService locService)
         {
-            this.clave = clave;
-            this.contexto = context;
-            this.localizacion = locService;
-            this.id = id;
+            _key = clave;
+            _context = context;
+            _localizer = locService;
+            _id = id;
         }
 
         /// <summary>
@@ -44,13 +42,13 @@ namespace CaducaRest.Rules.Categoria
         /// <returns></returns>
         public bool IsValid()
         {
-            var registroRepetido = contexto.Categoria.AsNoTracking()
-                                    .FirstOrDefault(c => c.Clave == clave
-                                                    && c.Id != id);
+            var registroRepetido = _context.Categoria.AsNoTracking()
+                                    .FirstOrDefault(c => c.Clave == _key
+                                                    && c.Id != _id);
             if (registroRepetido != null)
             {
                 customError = new CustomError(400, String.Format(
-                this.localizacion.GetLocalizedHtmlString("Repeteaded"),
+                _localizer.GetLocalizedHtmlString("Repeteaded"),
                 "categoría", "clave"), "Clave");
                 return false;
             }

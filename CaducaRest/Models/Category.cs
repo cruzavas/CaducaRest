@@ -6,29 +6,28 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CaducaRest.Models
 {
     /// <summary>
-    /// Permite registrar las categorías de los productos
-    /// que vende la empresa
+    /// Allows to register the categories of the products that the company sells
     /// </summary>
-    public class Categoria
+    public class Category
 	{
         /// <summary>
-        /// Id de la categoria
+        /// category Id
         /// </summary>
-        /// <value>El Id se incrementa automáticamente</value>
+        /// <value>Id increments automatically</value>
         public int Id { get; set; }
 
         /// <summary>
-        /// Obtiene o establece la clave de la categoría
+        /// Get or Set the category key
         /// </summary>
-        /// <value>La clave de la categoria</value>
+        /// <value>Category Key</value>
         [Required(ErrorMessage = "Required")]
         [Range(1, 999, ErrorMessage = "Range")]
         public int Clave { get; set; }
 
         /// <summary>
-        /// Obtiene o establece el nombre de la categoría
+        /// Get or Set the category name
         /// </summary>
-        /// <value>El nombre de la categoría</value>
+        /// <value>Category Name</value>
         [Required(ErrorMessage = "Required")]
         [Column(TypeName = "VARCHAR(80)")]
         public string Nombre { get; set; }

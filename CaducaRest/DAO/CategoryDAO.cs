@@ -3,7 +3,6 @@ using CaducaRest.Models;
 using CaducaRest.Resources;
 using CaducaRest.Rules.Categoria;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,11 +12,11 @@ namespace CaducaRest.DAO
 	/// <summary>
 	/// 
 	/// </summary>
-	public class CategoriaDAO
+	public class CategoryDAO
 	{
 		private readonly CaducaContext _context;
 		private readonly LocService _localizer;
-		private AccesoDAO<Categoria> categoriaDAO;
+		private AccessDAO<Category> categoryDAO;
 		/// <summary>
 		/// Mensaje de error personalizado
 		/// </summary>
@@ -28,43 +27,43 @@ namespace CaducaRest.DAO
 		/// </summary>
 		/// <param name="context"></param>
 		/// <param name="locService"></param>
-		public CategoriaDAO(CaducaContext context, LocService locService)
+		public CategoryDAO(CaducaContext context, LocService locService)
 		{
 			_context = context;
 			_localizer = locService;
-			categoriaDAO = new AccesoDAO<Categoria>(context, locService);
+			categoryDAO = new AccessDAO<Category>(context, locService);
 		}
 
 		/// <summary>
 		/// Obtiene todas las categorias
 		/// </summary>
 		/// <returns></returns>
-		public async Task<List<Categoria>> ObtenerTodoAsync()
+		public async Task<List<Category>> ObtenerTodoAsync()
 		{
-			return await _context.Categoria.ToListAsync();
+			return await _context.Category.ToListAsync();
 		}
 
-		public async Task<Categoria> ObtenerPorIdAsync(int id)
+		public async Task<Category> ObtenerPorIdAsync(int id)
 		{
-			return await _context.Categoria.FindAsync(id);
+			return await _context.Category.FindAsync(id);
 		}
 
-		public async Task<bool> AgregarAsync(Categoria categoria)
+		public async Task<bool> AgregarAsync(Category categoria)
 		{
-			ReglaNombreUnico nombreEsUnico = new ReglaNombreUnico
+			RuleUniqueName nombreEsUnico = new RuleUniqueName
 			(categoria.Id, categoria.Nombre, _context, _localizer);
-			ReglaClaveUnico claveEsUnica = new ReglaClaveUnico
+			RuleUniqueKey claveEsUnica = new RuleUniqueKey
 				(categoria.Id, categoria.Clave, _context, _localizer);
 
 			List<IRule> reglas = new List<IRule>();
 			reglas.Add(nombreEsUnico);
 			reglas.Add(claveEsUnica);
 
-			if (await categoriaDAO.AgregarAsync(categoria, reglas))
+			if (await categoryDAO.AgregarAsync(categoria, reglas))
 				return true;
 			else
 			{
-				customError = categoriaDAO.customError;
+				customError = categoryDAO.customError;
 				return false;
 			}
 		}
@@ -74,20 +73,20 @@ namespace CaducaRest.DAO
 		/// </summary>
 		/// <param name="categoria">Datos de la categoria</param>
 		/// <returns></returns>
-		public async Task<bool> ModificarAsync(Categoria categoria)
+		public async Task<bool> ModificarAsync(Category categoria)
 		{
-			ReglaNombreUnico nombreEsUnico = new ReglaNombreUnico(categoria.Id, categoria.Nombre, _context, _localizer);
-			ReglaClaveUnico claveEsUnica = new ReglaClaveUnico(categoria.Id, categoria.Clave, _context, _localizer);
+			RuleUniqueName nombreEsUnico = new RuleUniqueName(categoria.Id, categoria.Nombre, _context, _localizer);
+			RuleUniqueKey claveEsUnica = new RuleUniqueKey(categoria.Id, categoria.Clave, _context, _localizer);
 
 			List<IRule> reglas = new List<IRule>();
 			reglas.Add(nombreEsUnico);
 			reglas.Add(claveEsUnica);
 
-			if (await categoriaDAO.ModificarAsync(categoria, reglas))
+			if (await categoryDAO.ModificarAsync(categoria, reglas))
 				return true;
 			else
 			{
-				customError = categoriaDAO.customError;
+				customError = categoryDAO.customError;
 				return false;
 			}
 		}
@@ -108,15 +107,15 @@ namespace CaducaRest.DAO
 				return false;
 			}
 
-			_context.Categoria.Remove(categoria);
+			_context.Category.Remove(categoria);
 			await _context.SaveChangesAsync();
 
 			return true;
 		}
 
-		private bool ExisteCategoria(int id)
+		private bool ExistCategory(int id)
 		{
-			return _context.Categoria.Any(e => e.Id == id);
+			return _context.Category.Any(e => e.Id == id);
 		}
 	}
 }

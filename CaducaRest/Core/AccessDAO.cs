@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace CaducaRest.Core
 {
-    public class AccesoDAO<TEntity> : IAccesoDAO<TEntity> where TEntity : class
+    public class AccessDAO<TEntity> : IAccessDAO<TEntity> where TEntity : class
     {
         private readonly CaducaContext contexto;
         private readonly LocService localizacion;
         public CustomError customError { get; set; }
 
-        public AccesoDAO(CaducaContext context, LocService locService)
+        public AccessDAO(CaducaContext context, LocService locService)
         {
             this.contexto = context;
             this.localizacion = locService;

@@ -13,22 +13,22 @@ namespace CaducaRest.Repository
             this.contexto = contexto;
         }
 
-        public void Agregar(Categoria categoria)
+        public void Agregar(Category categoria)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Borrar(Categoria categoria)
+        public void Borrar(Category categoria)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<Categoria> ObtenerCategoriaAsync(int id)
+        public Task<Category> ObtenerCategoriaAsync(int id)
         {
             throw new System.NotImplementedException();
         }
 
-        public async Task<Categoria> ObtenerPorIdAsync(int id)
+        public async Task<Category> ObtenerPorIdAsync(int id)
         {
             return await contexto.Categoria.FindAsync(id);
         }

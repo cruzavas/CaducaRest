@@ -14,8 +14,8 @@ namespace CaducaRest.DAO
 	/// </summary>
 	public class ProductDAO
 	{
-		private readonly CaducaContext contexto;
-		private readonly LocService localizacion;
+		private readonly CaducaContext _context;
+		private readonly LocService _localizer;
 
 		/// <summary>
 		/// Mensaje de error personalizado
@@ -29,17 +29,17 @@ namespace CaducaRest.DAO
 		/// <param name="locService"></param>
 		public ProductDAO(CaducaContext context, LocService locService)
 		{
-			this.contexto = context;
-			this.localizacion = locService;
+			_context = context;
+            _localizer = locService;
 		}
 
 		/// <summary>
 		/// Obtiene todas las Products
 		/// </summary>
 		/// <returns></returns>
-		public List<Producto> ObtenerTodo()
+		public List<Product> GetAll()
 		{
-			return contexto.Producto.ToList();
+			return _context.Product.ToList();
 		}
 
 		/// <summary>
@@ -47,9 +47,9 @@ namespace CaducaRest.DAO
 		/// </summary>
 		/// <param name="id">Id de la Product</param>
 		/// <returns></returns>
-		public async Task<Producto> ObtenerPorIdAsync(int id)
+		public async Task<Product> GetByIdAsync(int id)
 		{
-			return await contexto.Producto.FindAsync(id);
+			return await _context.Product.FindAsync(id);
 		}
 
 		/// <summary>
@@ -57,35 +57,35 @@ namespace CaducaRest.DAO
 		/// </summary>
 		/// <param name="Product"></param>
 		/// <returns></returns>
-		public async Task<bool> AgregarAsync(Producto Product)
+		public async Task<bool> AddAsync(Product Product)
 		{
-			Producto registroRepetido;
+			Product registroRepetido;
 
-			registroRepetido = contexto.Producto.
+			registroRepetido = _context.Product.
 				  FirstOrDefault(c => c.Nombre == Product.Nombre);
 			if (registroRepetido != null)
 			{
 				customError = new CustomError(400,
-						String.Format(this.localizacion
-							.GetLocalizedHtmlString("Repeteaded"),
+						String.Format(_localizer
+                            .GetLocalizedHtmlString("Repeteaded"),
 										  "Product",
 										  "nombre"), "Nombre");
 				return false;
 			}
-			registroRepetido = contexto.Producto.
+			registroRepetido = _context.Product.
 					FirstOrDefault(c => c.Clave == Product.Clave);
 			if (registroRepetido != null)
 			{
 				customError = new CustomError(400,
-						String.Format(this.localizacion
-							.GetLocalizedHtmlString("Repeteaded"),
+						String.Format(_localizer
+                            .GetLocalizedHtmlString("Repeteaded"),
 										"Product",
 										"clave"), "Clave");
 				return false;
 			}
 
-			contexto.Producto.Add(Product);
-			await contexto.SaveChangesAsync();
+            _context.Product.Add(Product);
+			await _context.SaveChangesAsync();
 
 			return true;
 		}
@@ -95,38 +95,38 @@ namespace CaducaRest.DAO
 		/// </summary>
 		/// <param name="Product">Datos de la Product</param>
 		/// <returns></returns>
-		public async Task<bool> ModificarAsync(Producto Product)
+		public async Task<bool> ModifiedAsync(Product Product)
 		{
-			Producto registroRepetido;
+			Product registroRepetido;
 
 			//Se busca si existe una Product con el mismo nombre 
 			//pero diferente Id
-			registroRepetido = contexto.Producto
+			registroRepetido = _context.Product
 							.FirstOrDefault(
 								   c => c.Nombre == Product.Nombre
 								   && c.Id != Product.Id);
 			if (registroRepetido != null)
 			{
 				customError = new CustomError(400,
-						 String.Format(this.localizacion
-							 .GetLocalizedHtmlString("Repeteaded"),
+						 String.Format(_localizer
+                             .GetLocalizedHtmlString("Repeteaded"),
 									 "Product", "nombre"), "Nombre");
 				return false;
 			}
-			registroRepetido = contexto.Producto
+			registroRepetido = _context.Product
 						.FirstOrDefault(
 							c => c.Clave == Product.Clave
 							&& c.Id != Product.Id);
 			if (registroRepetido != null)
 			{
 				customError = new CustomError(400,
-						   String.Format(this.localizacion
-							   .GetLocalizedHtmlString("Repeteaded"),
+						   String.Format(_localizer
+                               .GetLocalizedHtmlString("Repeteaded"),
 								   "Product", "clave"), "Clave");
 				return false;
 			}
-			contexto.Entry(Product).State = EntityState.Modified;
-			await contexto.SaveChangesAsync();
+            _context.Entry(Product).State = EntityState.Modified;
+			await _context.SaveChangesAsync();
 
 			return true;
 		}
@@ -136,26 +136,26 @@ namespace CaducaRest.DAO
 		/// </summary>
 		/// <param name="id">Id de la Product</param>
 		/// <returns></returns>
-		public async Task<bool> BorraAsync(int id)
+		public async Task<bool> DeleteAsync(int id)
 		{
-			var Product = await ObtenerPorIdAsync(id);
+			var Product = await GetByIdAsync(id);
 			if (Product == null)
 			{
 				customError = new CustomError(404,
-					String.Format(this.localizacion
-						.GetLocalizedHtmlString("NotFound"),
+					String.Format(_localizer
+                        .GetLocalizedHtmlString("NotFound"),
 												"El Product"), "Id");
 				return false;
 			}
 
-			contexto.Producto.Remove(Product);
-			await contexto.SaveChangesAsync();
+            _context.Product.Remove(Product);
+			await _context.SaveChangesAsync();
 			return true;
 		}
 
 		private bool ExisteProduct(int id)
 		{
-			return contexto.Producto.Any(e => e.Id == id);
+			return _context.Product.Any(e => e.Id == id);
 		}
 	}
 }
